@@ -2,9 +2,12 @@ package apple
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	appleEntity "print-apple/internal/entity/apple"
@@ -13,7 +16,10 @@ import (
 
 // IAppleSvc is an interface to User Service
 type IAppleSvc interface {
-	GetAppleFromFireBase(ctx context.Context) ([]appleEntity.Apple, error)
+	GetPrintApple(ctx context.Context) ([]appleEntity.Apple, error)
+	DeleteAndUpdateStorage(ctx context.Context, TransFH string) error
+	Insert(ctx context.Context, apple appleEntity.Apple) error
+	GetPrintPage(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
 }
 
 type (
@@ -38,9 +44,13 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 		result   interface{}
 		err      error
 		errRes   response.Error
+		apple    appleEntity.Apple
+		page     int
+		length   int
 	)
 	// Make new response object
 	resp = &response.Response{}
+	body, _ := ioutil.ReadAll(r.Body)
 	// Defer will be run at the end after method finishes
 	defer resp.RenderJSON(w, r)
 
@@ -53,8 +63,35 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 			_type = r.FormValue("get")
 		}
 		switch _type {
-		case "printappleall":
-			result, err = h.appleSvc.GetAppleFromFireBase(context.Background())
+		case "printapple":
+			result, err = h.appleSvc.GetPrintApple(context.Background())
+		case "getprintpage":
+			page, err = strconv.Atoi(r.FormValue("page"))
+			length, err = strconv.Atoi(r.FormValue("length"))
+			result, err = h.appleSvc.GetPrintPage(context.Background(), page, length)
+		}
+
+	case http.MethodPut:
+		json.Unmarshal(body, &apple)
+		var _type string
+		if _, putOK := r.URL.Query()["put"]; putOK {
+			_type = r.FormValue("put")
+		}
+		switch _type {
+		case "updel":
+			err = h.appleSvc.DeleteAndUpdateStorage(context.Background(), r.FormValue("TransFH"))
+		}
+
+	case http.MethodPost:
+		// Ambil semua data user
+		var _type string
+		if _, getOK := r.URL.Query()["post"]; getOK {
+			_type = r.FormValue("post")
+		}
+		switch _type {
+		case "insert":
+			json.Unmarshal(body, &apple)
+			err = h.appleSvc.Insert(context.Background(), apple)
 		}
 	default:
 		err = errors.New("400")

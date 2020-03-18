@@ -9,6 +9,7 @@ type Apple struct {
 	AlamatCabAMS     string    `firestore:"AlamatCabAMS" json:"alamat_cab_ams"`
 	ApoOutApoteker   string    `firestore:"ApoOut_Apoteker" json:"apo_out_apoteker"`
 	ApoOutSIA        string    `firestore:"ApoOut_SIA" json:"apo_out_sia"`
+	DPP              int       `firestore:"DPP" json:"dpp"` // CIMB
 	Kepada           string    `firestore:"Kepada" json:"kepada"`
 	KodeOutAMS       string    `firestore:"KodeOutAMS" json:"kode_out_ams"`
 	NOPL             string    `firestore:"NOPL" json:"no_pl"`
@@ -24,20 +25,26 @@ type Apple struct {
 	THPNoPL          string    `firestore:"THP_NoPL" json:"thp_no_pl"`
 	THPNoPOD         string    `firestore:"THP_NoPOD" json:"thp_no_pod"`
 	THPTglPL         time.Time `firestore:"THP_TglPL" json:"thp_tgl_pl"`
+	AlamatPajak      string    `firestore:"alamatPajak" json:"alamat_pajak"` // CIMB
 	Apj              string    `firestore:"apj" json:"apj"`
 	ApjTujuan        string    `firestore:"apjTujuan" json:"apj_tujuan"`
 	Consup           string    `firestore:"consup" json:"consup"`
+	ExtraDiskon      string    `firestore:"extraDiskon" json:"extra_diskon"` // CIMB
 	Finsuptop        int       `firestore:"finsup_top" json:"finsup_top"`
 	IjinDari         string    `firestore:"ijinDari" json:"ijin_dari"`
 	IjinTujuan       string    `firestore:"ijinTujuan" json:"ijin_tujuan"`
 	NamaOutlet       string    `firestore:"namaOutlet" json:"nama_outlet"`
+	NamaPajak        string    `firestore:"namaPajak" json:"nama_pajak"` // CIMB
 	NpwpDari         string    `firestore:"npwpDari" json:"npwp_dari"`
+	NpwpPajak        string    `firestore:"npwpPajak" json:"npwp_pajak"` // CIMB
 	NpwpTujuan       string    `firestore:"npwpTujuan" json:"npwp_tujuan"`
 	OutaddressDari   string    `firestore:"outaddressDari" json:"out_address_dari"`
 	OutaddressTujuan string    `firestore:"outaddressTujuan" json:"out_address_tujuan"`
 	OutnameDari      string    `firestore:"outnameDari" json:"out_name_dari"`
 	OutnameTujuan    string    `firestore:"outnameTujuan" json:"out_name_tujuan"`
+	PaymentMethod    string    `firestore:"paymentMethod" json:"payment_method"` // flag
 	Pembuat          string    `firestore:"pembuat" json:"pembuat"`
+	PpnPajak         int       `firestore:"ppnPajak" json:"ppn_pajak"` // CIMB
 	PrintCount       int       `firestore:"printCount" json:"print_count"`
 	Printed          string    `firestore:"printed" json:"printed"`
 	Sika             string    `firestore:"sika" json:"sika"`
@@ -47,9 +54,12 @@ type Apple struct {
 	TelpTujuan       string    `firestore:"telpTujuan" json:"telp_tujuan"`
 	TglTransf        string    `firestore:"tglTransf" json:"tgl_transf"`
 	TotalBerat       float64   `firestore:"totalBerat" json:"total_berat"`
+	TotalDiskon      float64   `firestore:"totalDiskon" json:"total_diskon"` // CIMB
+	TotalHarga       int       `firestore:"totalHarga" json:"total_harga"`   // CIMB
+	TotalPPN         int       `firestore:"totalPPN" json:"total_ppn"`       // CIMB
 	TotalQTY         int       `firestore:"totalQTY" json:"total_qty"`
 	TransFD          []transFD `json:"trans_fd"`
-	TransFH          string    `firestore:"transFH" json:"trans_fh"`
+	TransFH          string    `firestore:"transFH" json:"trans_fh"` // flag API
 }
 
 // transFD Object Model

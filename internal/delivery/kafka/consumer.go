@@ -17,7 +17,7 @@ import (
 
 //IAppleSvc is an interface to User Service
 type IAppleSvc interface {
-	GetAppleFromFireBase(ctx context.Context) ([]appleEntity.Apple, error)
+	GetPrintApple(ctx context.Context) ([]appleEntity.Apple, error)
 	// InsertMany(ctx context.Context, userList []appleEntity.Apple) error
 }
 
@@ -94,7 +94,7 @@ func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 			if err != nil {
 				log.Fatalf(err.Error())
 			}
-			_, err = consumer.appleSvc.GetAppleFromFireBase(context.Background())
+			_, err = consumer.appleSvc.GetPrintApple(context.Background())
 			fmt.Println(err)
 			if err != nil {
 				log.Fatalf(err.Error())

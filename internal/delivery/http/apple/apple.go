@@ -19,7 +19,8 @@ type IAppleSvc interface {
 	GetPrintApple(ctx context.Context) ([]appleEntity.Apple, error)
 	DeleteAndUpdateStorage(ctx context.Context, TransFH string) error
 	Insert(ctx context.Context, apple appleEntity.Apple) error
-	GetPrintPage(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
+	GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
+	GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
 }
 
 type (
@@ -63,12 +64,16 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 			_type = r.FormValue("get")
 		}
 		switch _type {
-		case "printapple":
+		case "printAppleAll":
 			result, err = h.appleSvc.GetPrintApple(context.Background())
-		case "getprintpage":
+		case "getPrintPageErr":
 			page, err = strconv.Atoi(r.FormValue("page"))
 			length, err = strconv.Atoi(r.FormValue("length"))
-			result, err = h.appleSvc.GetPrintPage(context.Background(), page, length)
+			result, err = h.appleSvc.GetPrintPageTemp(context.Background(), page, length)
+		case "getPrintPageFinal":
+			page, err = strconv.Atoi(r.FormValue("page"))
+			length, err = strconv.Atoi(r.FormValue("length"))
+			result, err = h.appleSvc.GetPrintPageTemp(context.Background(), page, length)
 		}
 
 	case http.MethodPut:

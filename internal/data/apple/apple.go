@@ -39,14 +39,10 @@ var (
 )
 
 // New ...
-// db *sqlx.DB
 func New(fb *firebaseclient.Client) Data {
 	d := Data{
-		// db: db,
 		fb: fb.Client,
 	}
-
-	// d.initStmt()
 	return d
 }
 
@@ -56,7 +52,6 @@ func (d Data) GetPrintApple(ctx context.Context) ([]appleEntity.Apple, error) {
 		appleFirebase []appleEntity.Apple
 		err           error
 	)
-	// test := d.fb.Collection("user_test")
 	iter := d.fb.Collection("PrintApple").Documents(ctx)
 	for {
 		var apple appleEntity.Apple
@@ -111,8 +106,8 @@ func (d Data) Insert(ctx context.Context, apple appleEntity.Apple) error {
 	return err
 }
 
-// GetPrintPage ...
-func (d Data) GetPrintPage(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
+// GetPrintPageTemp ...
+func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
 	var (
 		apple   appleEntity.Apple
 		apples  []appleEntity.Apple
@@ -135,6 +130,51 @@ func (d Data) GetPrintPage(ctx context.Context, page int, length int) ([]appleEn
 		lastDoc = docs[len(docs)-1]
 		// Query mulai setelah doc terakhir
 		iter = d.fb.Collection("PrintApple").StartAfter(lastDoc).Limit(length).Documents(ctx)
+	}
+
+	// Looping documents
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+
+		if err != nil {
+			return apples, errors.Wrap(err, "[DATA][GetUserPage] Failed to iterate Document!")
+		}
+		err = doc.DataTo(&apple)
+		if err != nil {
+			return apples, errors.Wrap(err, "[DATA][GetUserPage] Failed to Populate Struct!")
+		}
+		apples = append(apples, apple)
+	}
+	return apples, err
+}
+
+// GetPrintPageFinal ...
+func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
+	var (
+		apple   appleEntity.Apple
+		apples  []appleEntity.Apple
+		iter    *firestore.DocumentIterator
+		lastDoc *firestore.DocumentSnapshot
+		err     error
+	)
+
+	if page == 1 {
+		// Kalau page 1 ambil data langsung dari query
+		iter = d.fb.Collection("PrintAppleStorage").Limit(length).Documents(ctx)
+	} else {
+		// Kalau page > 1 ambil data sampai page sebelumnya
+		previous := d.fb.Collection("PrintAppleStorage").Limit((page - 1) * length).Documents(ctx)
+		docs, err := previous.GetAll()
+		if err != nil {
+			return nil, err
+		}
+		// Ambil doc terakhir
+		lastDoc = docs[len(docs)-1]
+		// Query mulai setelah doc terakhir
+		iter = d.fb.Collection("PrintAppleStorage").StartAfter(lastDoc).Limit(length).Documents(ctx)
 	}
 
 	// Looping documents

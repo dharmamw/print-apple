@@ -6,15 +6,11 @@ import (
 
 	"print-apple/internal/config"
 
-	// "github.com/jmoiron/sqlx"
-
 	appleData "print-apple/internal/data/apple"
-	// userData "print-apple/internal/data/user"
 	server "print-apple/internal/delivery/http"
 	appleHandler "print-apple/internal/delivery/http/apple"
 	appleService "print-apple/internal/service/apple"
 
-	// userService "print-apple/internal/service/user"
 	kConsumer "print-apple/internal/delivery/kafka"
 	firebaseclient "print-apple/pkg/firebaseClient"
 	"print-apple/pkg/kafka"

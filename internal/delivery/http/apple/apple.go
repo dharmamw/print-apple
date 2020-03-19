@@ -21,6 +21,8 @@ type IAppleSvc interface {
 	Insert(ctx context.Context, apple appleEntity.Apple) error
 	GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
 	GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
+	GetByTransFHTemp(ctx context.Context, TransFH string) (appleEntity.Apple, error)
+	GetByTransFHFinal(ctx context.Context, TransFH string) (appleEntity.Apple, error)
 }
 
 type (
@@ -66,6 +68,10 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 		switch _type {
 		case "printAppleAll":
 			result, err = h.appleSvc.GetPrintApple(context.Background())
+		case "getByIDTemp":
+			result, err = h.appleSvc.GetByTransFHTemp(context.Background(), r.FormValue("ID"))
+		case "getByIDFinal":
+			result, err = h.appleSvc.GetByTransFHFinal(context.Background(), r.FormValue("ID"))	
 		case "getPrintPageErr":
 			page, err = strconv.Atoi(r.FormValue("page"))
 			length, err = strconv.Atoi(r.FormValue("length"))

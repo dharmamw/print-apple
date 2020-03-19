@@ -16,6 +16,8 @@ type AppleData interface {
 	Insert(ctx context.Context, apple appleEntity.Apple) error
 	GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
 	GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
+	GetByTransFHTemp(ctx context.Context, TransFH string) (appleEntity.Apple, error)
+	GetByTransFHFinal(ctx context.Context, TransFH string) (appleEntity.Apple, error)
 }
 
 // Service ...
@@ -58,13 +60,24 @@ func (s Service) Insert(ctx context.Context, apple appleEntity.Apple) error {
 
 // GetPrintPageTemp ...
 func (s Service) GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
-    appleList, err := s.AppleData.GetPrintPageTemp(ctx, page, length)
-    return appleList, err
+	appleList, err := s.AppleData.GetPrintPageTemp(ctx, page, length)
+	return appleList, err
 }
 
 // GetPrintPageFinal ...
 func (s Service) GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
-    appleList, err := s.AppleData.GetPrintPageFinal(ctx, page, length)
-    return appleList, err
+	appleList, err := s.AppleData.GetPrintPageFinal(ctx, page, length)
+	return appleList, err
 }
 
+// GetByTransFHTemp ...
+func (s Service) GetByTransFHTemp(ctx context.Context, TransFH string) (appleEntity.Apple, error) {
+	appleFirebase, err := s.AppleData.GetByTransFHTemp(ctx, TransFH)
+	return appleFirebase, err
+}
+
+// GetByTransFHFinal ...
+func (s Service) GetByTransFHFinal(ctx context.Context, TransFH string) (appleEntity.Apple, error) {
+	appleFirebase, err := s.AppleData.GetByTransFHFinal(ctx, TransFH)
+	return appleFirebase, err
+}

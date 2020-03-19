@@ -8,4 +8,4 @@ kafka:
     brokers:
         - "35.247.190.1:9092" # ??
     subscriptions:
-        - "New_Print"      
+        - "Print_Queue"      

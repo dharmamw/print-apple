@@ -4,14 +4,14 @@ import (
 	"context"
 	"log"
 
+	// "strconv"
+
 	appleEntity "print-apple/internal/entity/apple"
-	// "print-apple/pkg/errors"
 	"print-apple/pkg/errors"
 	firebaseclient "print-apple/pkg/firebaseClient"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
-	// "github.com/jmoiron/sqlx"
 )
 
 type (
@@ -87,6 +87,18 @@ func (d Data) UpdateStorage(ctx context.Context, TransFH string) error {
 	_, err = d.fb.Collection("PrintAppleStorage").Doc(TransFH).Set(ctx, appleValidate)
 	return err
 }
+
+// // PrintProcessing ...
+// func (d Data) PrintProcessing(ctx context.Context, TransFH string) error {
+// 	doc, err := d.fb.Collection("PrintApple").Doc(TransFH).Get(ctx)
+
+// 	printValidate := doc.Ref.ID
+// 	if printValidate == nil {
+// 		return errors.Wrap(err, "Data Not Exist")
+// 	}
+// 	log.Println(printValidate)
+// 	return err
+// }
 
 // DeleteAndUpdateStorage ...
 func (d Data) DeleteAndUpdateStorage(ctx context.Context, TransFH string) error {
@@ -194,4 +206,32 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]ap
 		apples = append(apples, apple)
 	}
 	return apples, err
+}
+
+//GetByTransFHTemp ...
+func (d Data) GetByTransFHTemp(ctx context.Context, TransFH string) (appleEntity.Apple, error) {
+	doc, err := d.fb.Collection("PrintApple").Doc(TransFH).Get(ctx)
+	var appleFirebase appleEntity.Apple
+	err = doc.DataTo(&appleFirebase)
+
+	if err != nil {
+		return appleFirebase, err
+	} else if err == nil {
+		return appleFirebase, errors.Wrap(err, "[DATA][GetByTransFHTemp]")
+	}
+	return appleFirebase, err
+}
+
+//GetByTransFHFinal ...
+func (d Data) GetByTransFHFinal(ctx context.Context, TransFH string) (appleEntity.Apple, error) {
+	doc, err := d.fb.Collection("PrintAppleStorage").Doc(TransFH).Get(ctx)
+	var appleFirebase appleEntity.Apple
+	err = doc.DataTo(&appleFirebase)
+
+	if err != nil {
+		return appleFirebase, err
+	} else if err == nil {
+		return appleFirebase, errors.Wrap(err, "[DATA][GetByTransFHFinal]")
+	}
+	return appleFirebase, err
 }

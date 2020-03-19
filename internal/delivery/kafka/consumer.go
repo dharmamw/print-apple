@@ -77,24 +77,14 @@ func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 	for message := range claim.Messages() {
 		log.Printf("[KAFKA][CONSUMER] Message claimed: Value = %s, Timestamp = %v, Topic = %s", string(message.Value), message.Timestamp, message.Topic)
 		switch message.Topic {
-		// case "New_ManyUser":
-		// 	var data []userEntity.User
-		// 	err := json.Unmarshal(message.Value, &data)
-		// 	if err != nil {
-		// 		log.Fatalf(err.Error())
-		// 	}
-		// 	err = consumer.userSvc.InsertMany(context.Background(), data)
-		// 	fmt.Println(err)
-		// 	if err != nil {
-		// 		log.Fatalf(err.Error())
-		// 	}
-		case "New_Print":
+		case "Print_Queue":
 			var data appleEntity.Apple
 			err := json.Unmarshal(message.Value, &data)
 			if err != nil {
 				log.Fatalf(err.Error())
 			}
 			_, err = consumer.appleSvc.GetPrintApple(context.Background())
+			//, data.TransFH
 			fmt.Println(err)
 			if err != nil {
 				log.Fatalf(err.Error())

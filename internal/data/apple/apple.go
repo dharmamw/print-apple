@@ -27,17 +27,6 @@ type (
 	}
 )
 
-const (
-	getAllUsers  = "GetAllUsers"
-	qGetAllUsers = "SELECT * FROM user_test"
-)
-
-var (
-	readStmt = []statement{
-		{getAllUsers, qGetAllUsers},
-	}
-)
-
 // New ...
 func New(fb *firebaseclient.Client) Data {
 	d := Data{
@@ -70,8 +59,51 @@ func (d Data) GetPrintApple(ctx context.Context) ([]appleEntity.Apple, error) {
 	return appleFirebase, err
 }
 
+// GetPrintAppleStorage ...
+func (d Data) GetPrintAppleStorage(ctx context.Context) ([]appleEntity.Apple, error) {
+	var (
+		appleFirebase []appleEntity.Apple
+		err           error
+	)
+	iter := d.fb.Collection("PrintAppleStorage").Documents(ctx)
+	for {
+		var apple appleEntity.Apple
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		log.Println(doc)
+		err = doc.DataTo(&apple)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Println(apple)
+		appleFirebase = append(appleFirebase, apple)
+	}
+	return appleFirebase, err
+}
+
 //Get and set data
 
+// // PrintProcessing ...
+// func (d Data) PrintProcessing(ctx context.Context, TransFH string) error {
+// 	var (
+// 		err error
+// 	)
+// 	doc, err := d.fb.Collection("PrintApple").Doc(TransFH).Get(ctx)
+
+// 	printValidate := doc.Ref.ID
+// 	if printValidate == nil {
+// 		return errors.Wrap(err, "Data Not Exist")
+// 	}
+
+// 	for _, i := range userList {
+// 		_, err = d.fb.Collection("user_test").Doc(i.NIP).Set(ctx, i)
+// 	}
+// 	return err
+// 	log.Println(printValidate)
+// 	return err
+// }
 //UpdateStorage ...
 func (d Data) UpdateStorage(ctx context.Context, TransFH string) error {
 	_, err := d.fb.Collection("PrintApple").Doc(TransFH).Update(ctx, []firestore.Update{{
@@ -87,18 +119,6 @@ func (d Data) UpdateStorage(ctx context.Context, TransFH string) error {
 	_, err = d.fb.Collection("PrintAppleStorage").Doc(TransFH).Set(ctx, appleValidate)
 	return err
 }
-
-// // PrintProcessing ...
-// func (d Data) PrintProcessing(ctx context.Context, TransFH string) error {
-// 	doc, err := d.fb.Collection("PrintApple").Doc(TransFH).Get(ctx)
-
-// 	printValidate := doc.Ref.ID
-// 	if printValidate == nil {
-// 		return errors.Wrap(err, "Data Not Exist")
-// 	}
-// 	log.Println(printValidate)
-// 	return err
-// }
 
 // DeleteAndUpdateStorage ...
 func (d Data) DeleteAndUpdateStorage(ctx context.Context, TransFH string) error {
@@ -208,30 +228,56 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]ap
 	return apples, err
 }
 
-//GetByTransFHTemp ...
-func (d Data) GetByTransFHTemp(ctx context.Context, TransFH string) (appleEntity.Apple, error) {
-	doc, err := d.fb.Collection("PrintApple").Doc(TransFH).Get(ctx)
-	var appleFirebase appleEntity.Apple
-	err = doc.DataTo(&appleFirebase)
+// GetByTransFHTemp ...
+func (d Data) GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEntity.Apple, error) {
+	var (
+		appleFirebase []appleEntity.Apple
+		err           error
+	)
 
-	if err != nil {
-		return appleFirebase, err
-	} else if err == nil {
-		return appleFirebase, errors.Wrap(err, "[DATA][GetByTransFHTemp]")
+	iter := d.fb.Collection("PrintApple").Documents(ctx)
+	for {
+		var apple appleEntity.Apple
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		log.Println(doc)
+		err = doc.DataTo(&apple)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Println(apple)
+		if apple.TransFH[:3] == TransFH {
+			appleFirebase = append(appleFirebase, apple)
+		}
 	}
 	return appleFirebase, err
 }
 
-//GetByTransFHFinal ...
-func (d Data) GetByTransFHFinal(ctx context.Context, TransFH string) (appleEntity.Apple, error) {
-	doc, err := d.fb.Collection("PrintAppleStorage").Doc(TransFH).Get(ctx)
-	var appleFirebase appleEntity.Apple
-	err = doc.DataTo(&appleFirebase)
+// GetByTransFHFinal ...
+func (d Data) GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error) {
+	var (
+		appleFirebase []appleEntity.Apple
+		err           error
+	)
 
-	if err != nil {
-		return appleFirebase, err
-	} else if err == nil {
-		return appleFirebase, errors.Wrap(err, "[DATA][GetByTransFHFinal]")
+	iter := d.fb.Collection("PrintAppleStorage").Documents(ctx)
+	for {
+		var apple appleEntity.Apple
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		log.Println(doc)
+		err = doc.DataTo(&apple)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Println(apple)
+		if apple.TransFH[:3] == TransFH {
+			appleFirebase = append(appleFirebase, apple)
+		}
 	}
 	return appleFirebase, err
 }

@@ -17,12 +17,13 @@ import (
 // IAppleSvc is an interface to User Service
 type IAppleSvc interface {
 	GetPrintApple(ctx context.Context) ([]appleEntity.Apple, error)
+	GetPrintAppleStorage(ctx context.Context) ([]appleEntity.Apple, error)
 	DeleteAndUpdateStorage(ctx context.Context, TransFH string) error
 	Insert(ctx context.Context, apple appleEntity.Apple) error
 	GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
 	GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
-	GetByTransFHTemp(ctx context.Context, TransFH string) (appleEntity.Apple, error)
-	GetByTransFHFinal(ctx context.Context, TransFH string) (appleEntity.Apple, error)
+	GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
+	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 }
 
 type (
@@ -68,10 +69,12 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 		switch _type {
 		case "printAppleAll":
 			result, err = h.appleSvc.GetPrintApple(context.Background())
+		case "printAppleStorageAll":
+			result, err = h.appleSvc.GetPrintAppleStorage(context.Background())
 		case "getByIDTemp":
 			result, err = h.appleSvc.GetByTransFHTemp(context.Background(), r.FormValue("ID"))
 		case "getByIDFinal":
-			result, err = h.appleSvc.GetByTransFHFinal(context.Background(), r.FormValue("ID"))	
+			result, err = h.appleSvc.GetByTransFHFinal(context.Background(), r.FormValue("ID"))
 		case "getPrintPageErr":
 			page, err = strconv.Atoi(r.FormValue("page"))
 			length, err = strconv.Atoi(r.FormValue("length"))

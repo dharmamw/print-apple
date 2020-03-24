@@ -19,8 +19,8 @@ type AppleData interface {
 	GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
 	GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
-	GetByTglFakturTemp(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error)
-	GetByTglFakturFinal(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error)
+	GetByTglFakturTemp(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error)
+	GetByTglFakturFinal(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error)
 }
 
 // Service ...
@@ -103,15 +103,15 @@ func (s Service) GetByTransFHFinal(ctx context.Context, TransFH string) ([]apple
 }
 
 // GetByTglFakturTemp ...
-func (s Service) GetByTglFakturTemp(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error) {
+func (s Service) GetByTglFakturTemp(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error) {
 
-	apple, err := s.AppleData.GetByTglFakturTemp(ctx, TglFaktur)
+	apple, err := s.AppleData.GetByTglFakturTemp(ctx, TglFaktur0, TglFaktur1)
 	return apple, err
 }
 
 // GetByTglFakturFinal ...
-func (s Service) GetByTglFakturFinal(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error) {
+func (s Service) GetByTglFakturFinal(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error) {
 
-	apple, err := s.AppleData.GetByTglFakturFinal(ctx, TglFaktur)
+	apple, err := s.AppleData.GetByTglFakturFinal(ctx, TglFaktur0, TglFaktur1)
 	return apple, err
 }

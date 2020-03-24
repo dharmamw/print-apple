@@ -262,7 +262,7 @@ func (d Data) GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEnt
 }
 
 // GetByTglFakturTemp ...
-func (d Data) GetByTglFakturTemp(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error) {
+func (d Data) GetByTglFakturTemp(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error) {
 	var (
 		appleFirebase []appleEntity.Apple
 		err           error
@@ -281,7 +281,7 @@ func (d Data) GetByTglFakturTemp(ctx context.Context, TglFaktur string) ([]apple
 			log.Println(err.Error())
 		}
 		log.Println(apple)
-		if apple.TglFaktur == TglFaktur {
+		if apple.TglFaktur >= TglFaktur0 && apple.TglFaktur <= TglFaktur1 {
 			appleFirebase = append(appleFirebase, apple)
 		}
 	}
@@ -289,7 +289,7 @@ func (d Data) GetByTglFakturTemp(ctx context.Context, TglFaktur string) ([]apple
 }
 
 // GetByTglFakturFinal ...
-func (d Data) GetByTglFakturFinal(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error) {
+func (d Data) GetByTglFakturFinal(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error) {
 	var (
 		appleFirebase []appleEntity.Apple
 		err           error
@@ -308,7 +308,7 @@ func (d Data) GetByTglFakturFinal(ctx context.Context, TglFaktur string) ([]appl
 			log.Println(err.Error())
 		}
 		log.Println(apple)
-		if apple.TglFaktur == TglFaktur {
+		if apple.TglFaktur >= TglFaktur0 && apple.TglFaktur <= TglFaktur1 {
 			appleFirebase = append(appleFirebase, apple)
 		}
 	}

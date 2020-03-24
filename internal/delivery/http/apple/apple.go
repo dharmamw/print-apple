@@ -24,8 +24,8 @@ type IAppleSvc interface {
 	GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
 	GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
-	GetByTglFakturTemp(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error)
-	GetByTglFakturFinal(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error)
+	GetByTglFakturTemp(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error)
+	GetByTglFakturFinal(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error)
 }
 
 type (
@@ -78,9 +78,9 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 		case "getByIDFinal":
 			result, err = h.appleSvc.GetByTransFHFinal(context.Background(), r.FormValue("ID"))
 		case "getByTglTemp":
-			result, err = h.appleSvc.GetByTglFakturTemp(context.Background(), r.FormValue("Date"))
+			result, err = h.appleSvc.GetByTglFakturTemp(context.Background(), r.FormValue("Start"), r.FormValue("End"))
 		case "getByTglFinal":
-			result, err = h.appleSvc.GetByTglFakturFinal(context.Background(), r.FormValue("Date"))
+			result, err = h.appleSvc.GetByTglFakturFinal(context.Background(), r.FormValue("Start"), r.FormValue("End"))
 		case "getPrintPageErr":
 			page, err = strconv.Atoi(r.FormValue("page"))
 			length, err = strconv.Atoi(r.FormValue("length"))

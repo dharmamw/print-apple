@@ -2,10 +2,5 @@ server:
     port: ":4444"
 firebase:
     ProjectID: "neogenesis-2a947"
-kafka:
-    username: ""
-    password: ""
-    brokers:
-        - "35.247.190.1:9092" # ??
     subscriptions:
         - "Print_Queue"      

@@ -11,9 +11,7 @@ import (
 	appleHandler "print-apple/internal/delivery/http/apple"
 	appleService "print-apple/internal/service/apple"
 
-	kConsumer "print-apple/internal/delivery/kafka"
 	firebaseclient "print-apple/pkg/firebaseClient"
-	"print-apple/pkg/kafka"
 )
 
 // HTTP will load configuration, do dependency injection and then start the HTTP server
@@ -25,7 +23,6 @@ func HTTP() error {
 		ah  *appleHandler.Handler // User domain handler
 		cfg *config.Config        // Configuration object
 		fb  *firebaseclient.Client
-		k   *kafka.Kafka // Kafka Producer
 	)
 
 	// Get configuration
@@ -40,12 +37,6 @@ func HTTP() error {
 		log.Fatalf("[DB] Failed to initialize database connection: %v", err)
 	}
 
-	log.Println(cfg.Kafka.Brokers)
-	k, err = kafka.New(cfg.Kafka.Username, cfg.Kafka.Password, cfg.Kafka.Brokers)
-	if err != nil {
-		log.Fatalf("[KAFKA] Failed to initialize kafka producer: %v", err)
-	}
-
 	// Apple domain initialization
 	ad = appleData.New(fb)
 	as = appleService.New(ad)
@@ -56,12 +47,6 @@ func HTTP() error {
 		Apple: ah,
 	}
 
-	// Error Handling
-	if err := s.Serve(cfg.Server.Port); err != http.ErrServerClosed {
-		return err
-	}
-
-	go kConsumer.New(as, k, cfg.Kafka.Subscriptions)
 	// Error Handling
 	if err := s.Serve(cfg.Server.Port); err != http.ErrServerClosed {
 		return err

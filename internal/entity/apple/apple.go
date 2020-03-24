@@ -10,36 +10,45 @@ type Apple struct {
 	ApoOutApoteker   string    `firestore:"ApoOut_Apoteker" json:"apo_out_apoteker"`
 	ApoOutSIA        string    `firestore:"ApoOut_SIA" json:"apo_out_sia"`
 	DPP              int       `firestore:"DPP" json:"dpp"` // CIMB
+	DueDate          string    `firestore:"DueDate" json:"due_date"`
+	FakturPajak      string    `firestore:"FakturPajak" json:"faktur_pajak"`
 	Kepada           string    `firestore:"Kepada" json:"kepada"`
 	KodeOutAMS       string    `firestore:"KodeOutAMS" json:"kode_out_ams"`
 	NOPL             string    `firestore:"NOPL" json:"no_pl"`
 	NamaCabsAMS      string    `firestore:"NamaCabsAMS" json:"nama_cabs_ams"`
 	NamaGudang       string    `firestore:"NamaGudang" json:"nama_gudang"`
 	NamaOut          string    `firestore:"NamaOut" json:"nama_out"`
+	NoFaktur         string    `firestore:"NoFaktur" json:"no_faktur"`
 	OrdLclNoPO       string    `firestore:"OrdLcl_NoPO" json:"ord_lcl_no_po"`
 	OrdLclTglPO      string    `firestore:"OrdLcl_TglPO" json:"ord_lcl_tgl_po"`
 	OutAddress       string    `firestore:"OutAddress" json:"out_address"`
 	OutCode          string    `firestore:"Out_Code" json:"out_code"`
 	OutName          string    `firestore:"Out_Name" json:"out_name"`
+	THPDistCode      string    `firestore:"THP_DistCode" json:"thp_dist_code"`
 	THPDistName      string    `firestore:"THP_DistName" json:"thp_dist_name"`
 	THPNoPL          string    `firestore:"THP_NoPL" json:"thp_no_pl"`
 	THPNoPOD         string    `firestore:"THP_NoPOD" json:"thp_no_pod"`
+	THPPemesanID     string    `firestore:"THP_PemesanID" json:"thp_pemesan_id"`
 	THPTglPL         time.Time `firestore:"THP_TglPL" json:"thp_tgl_pl"`
+	TglFaktur        string    `firestore:"TglFaktur" json:"tgl_faktur"`
 	AlamatPajak      string    `firestore:"alamatPajak" json:"alamat_pajak"` // CIMB
 	Apj              string    `firestore:"apj" json:"apj"`
 	ApjTujuan        string    `firestore:"apjTujuan" json:"apj_tujuan"`
 	Consup           string    `firestore:"consup" json:"consup"`
 	ExtraDiskon      string    `firestore:"extraDiskon" json:"extra_diskon"` // CIMB
 	Finsuptop        int       `firestore:"finsup_top" json:"finsup_top"`
+	FlagTrf          string    `firestore:"flagTrf" json:"flag_trf"`
 	IjinDari         string    `firestore:"ijinDari" json:"ijin_dari"`
 	IjinTujuan       string    `firestore:"ijinTujuan" json:"ijin_tujuan"`
 	NamaOutlet       string    `firestore:"namaOutlet" json:"nama_outlet"`
 	NamaPajak        string    `firestore:"namaPajak" json:"nama_pajak"` // CIMB
+	NoSP             string    `firestore:"noSP" json:"no_sp"`
 	NpwpDari         string    `firestore:"npwpDari" json:"npwp_dari"`
 	NpwpPajak        string    `firestore:"npwpPajak" json:"npwp_pajak"` // CIMB
 	NpwpTujuan       string    `firestore:"npwpTujuan" json:"npwp_tujuan"`
 	OutaddressDari   string    `firestore:"outaddressDari" json:"out_address_dari"`
 	OutaddressTujuan string    `firestore:"outaddressTujuan" json:"out_address_tujuan"`
+	OutcodeDest      string    `firestore:"outcodeDest" json:"out_code_dest"`
 	OutnameDari      string    `firestore:"outnameDari" json:"out_name_dari"`
 	OutnameTujuan    string    `firestore:"outnameTujuan" json:"out_name_tujuan"`
 	PaymentMethod    string    `firestore:"paymentMethod" json:"payment_method"` // flag
@@ -49,6 +58,7 @@ type Apple struct {
 	Printed          string    `firestore:"printed" json:"printed"`
 	Sika             string    `firestore:"sika" json:"sika"`
 	SikaTujuan       string    `firestore:"sikaTujuan" json:"sika_tujuan"`
+	SubTotal         int       `firestore:"subTotal" json:"sub_total"`
 	Supaddress       string    `firestore:"sup_address" json:"sup_address"`
 	TelpDari         string    `firestore:"telpDari" json:"telp_dari"`
 	TelpTujuan       string    `firestore:"telpTujuan" json:"telp_tujuan"`
@@ -66,9 +76,13 @@ type Apple struct {
 type transFD struct {
 	ProMedUnit             int     `firestore:"Pro_MedUnit" json:"pro_med_unit"`
 	ProName                string  `firestore:"Pro_Name" json:"pro_name"`
+	Total                  int     `firestore:"Total" json:"total"`
+	TotalDiscount          int     `firestore:"TotalDiscount" json:"total_discount"`
 	TransFDCategoryProduct int     `firestore:"TransFD_CategoryProduct" json:"trans_fd_category_product"`
 	TransfDBatchNumber     string  `firestore:"TransfD_BatchNumber" json:"trans_fd_batch_number"`
+	TransfDDiscount        int     `firestore:"TransfDDiscount" json:"trans_fd_discount"`
 	TransfDED              string  `firestore:"TransfD_ED" json:"trans_fd_ed"`
+	TransfDGroup           int     `firestore:"TransfDGroup" json:"trans_fd_group"`
 	TransfDNoOrder         string  `firestore:"TransfD_NoOrder" json:"trans_fd_no_order"`
 	TransfDNoSP            string  `firestore:"TransfD_NoSP" json:"trans_fd_no_sp"`
 	TransfDNoTransf        string  `firestore:"TransfD_NoTransf" json:"trans_fd_no_transf"`
@@ -79,6 +93,7 @@ type transFD struct {
 	TransfDQty             int     `firestore:"TransfD_Qty" json:"trans_fd_qty"`
 	TransfDQtyStk          int     `firestore:"TransfD_QtyStk" json:"trans_fd_qty_stk"`
 	TransfDQtyScan         int     `firestore:"TransfD_Qty_Scan" json:"trans_fd_qty_scan"`
+	TransfDSalePrice       int     `firestore:"TransfD_SalePrice" json:"trans_fd_sale_price"`
 	TransfDUserID          string  `firestore:"TransfD_UserID" json:"trans_fd_user_id"`
 	WeiHValAvg             float64 `firestore:"WeiH_ValAvg" json:"weih_val_avg"`
 	WeiHValMax             float64 `firestore:"WeiH_ValMax" json:"weih_val_max"`

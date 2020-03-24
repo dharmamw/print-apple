@@ -83,27 +83,6 @@ func (d Data) GetPrintAppleStorage(ctx context.Context) ([]appleEntity.Apple, er
 	return appleFirebase, err
 }
 
-//Get and set data
-
-// // PrintProcessing ...
-// func (d Data) PrintProcessing(ctx context.Context, TransFH string) error {
-// 	var (
-// 		err error
-// 	)
-// 	doc, err := d.fb.Collection("PrintApple").Doc(TransFH).Get(ctx)
-
-// 	printValidate := doc.Ref.ID
-// 	if printValidate == nil {
-// 		return errors.Wrap(err, "Data Not Exist")
-// 	}
-
-// 	for _, i := range userList {
-// 		_, err = d.fb.Collection("user_test").Doc(i.NIP).Set(ctx, i)
-// 	}
-// 	return err
-// 	log.Println(printValidate)
-// 	return err
-// }
 //UpdateStorage ...
 func (d Data) UpdateStorage(ctx context.Context, TransFH string) error {
 	_, err := d.fb.Collection("PrintApple").Doc(TransFH).Update(ctx, []firestore.Update{{
@@ -276,6 +255,60 @@ func (d Data) GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEnt
 		}
 		log.Println(apple)
 		if apple.TransFH[:3] == TransFH {
+			appleFirebase = append(appleFirebase, apple)
+		}
+	}
+	return appleFirebase, err
+}
+
+// GetByTglFakturTemp ...
+func (d Data) GetByTglFakturTemp(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error) {
+	var (
+		appleFirebase []appleEntity.Apple
+		err           error
+	)
+
+	iter := d.fb.Collection("PrintApple").Documents(ctx)
+	for {
+		var apple appleEntity.Apple
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		log.Println(doc)
+		err = doc.DataTo(&apple)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Println(apple)
+		if apple.TglFaktur == TglFaktur {
+			appleFirebase = append(appleFirebase, apple)
+		}
+	}
+	return appleFirebase, err
+}
+
+// GetByTglFakturFinal ...
+func (d Data) GetByTglFakturFinal(ctx context.Context, TglFaktur string) ([]appleEntity.Apple, error) {
+	var (
+		appleFirebase []appleEntity.Apple
+		err           error
+	)
+
+	iter := d.fb.Collection("PrintAppleStorage").Documents(ctx)
+	for {
+		var apple appleEntity.Apple
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		log.Println(doc)
+		err = doc.DataTo(&apple)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		log.Println(apple)
+		if apple.TglFaktur == TglFaktur {
 			appleFirebase = append(appleFirebase, apple)
 		}
 	}

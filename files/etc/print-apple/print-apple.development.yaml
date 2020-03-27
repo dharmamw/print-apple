@@ -1,5 +1,5 @@
 server:
-    port: ":4444"
+    port: ":2442"
 firebase:
     ProjectID: "neogenesis-2a947"
     subscriptions:

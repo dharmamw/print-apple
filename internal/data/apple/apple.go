@@ -77,7 +77,6 @@ func (d Data) GetPrintAppleStorage(ctx context.Context) ([]appleEntity.Apple, er
 		if err != nil {
 			log.Println(err.Error())
 		}
-		log.Println(apple)
 		appleFirebase = append(appleFirebase, apple)
 	}
 	return appleFirebase, err
@@ -151,11 +150,11 @@ func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]app
 		}
 
 		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetUserPage] Failed to iterate Document!")
+			return apples, errors.Wrap(err, "[DATA][GetPrintTempStorage] Failed to iterate Document!")
 		}
 		err = doc.DataTo(&apple)
 		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetUserPage] Failed to Populate Struct!")
+			return apples, errors.Wrap(err, "[DATA][GetPrintTempStorage] Failed to Populate Struct!")
 		}
 		apples = append(apples, apple)
 	}
@@ -196,11 +195,11 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]ap
 		}
 
 		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetUserPage] Failed to iterate Document!")
+			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to iterate Document!")
 		}
 		err = doc.DataTo(&apple)
 		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetUserPage] Failed to Populate Struct!")
+			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to Populate Struct!")
 		}
 		apples = append(apples, apple)
 	}
@@ -226,7 +225,6 @@ func (d Data) GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEnti
 		if err != nil {
 			log.Println(err.Error())
 		}
-		log.Println(apple)
 		if apple.TransFH[:3] == TransFH {
 			appleFirebase = append(appleFirebase, apple)
 		}
@@ -253,7 +251,6 @@ func (d Data) GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEnt
 		if err != nil {
 			log.Println(err.Error())
 		}
-		log.Println(apple)
 		if apple.TransFH[:3] == TransFH {
 			appleFirebase = append(appleFirebase, apple)
 		}
@@ -280,7 +277,6 @@ func (d Data) GetByTglFakturTemp(ctx context.Context, TglFaktur0 string, TglFakt
 		if err != nil {
 			log.Println(err.Error())
 		}
-		log.Println(apple)
 		if apple.TglFaktur >= TglFaktur0 && apple.TglFaktur <= TglFaktur1 {
 			appleFirebase = append(appleFirebase, apple)
 		}
@@ -307,10 +303,10 @@ func (d Data) GetByTglFakturFinal(ctx context.Context, TglFaktur0 string, TglFak
 		if err != nil {
 			log.Println(err.Error())
 		}
-		log.Println(apple)
 		if apple.TglFaktur >= TglFaktur0 && apple.TglFaktur <= TglFaktur1 {
 			appleFirebase = append(appleFirebase, apple)
 		}
+
 	}
 	return appleFirebase, err
 }

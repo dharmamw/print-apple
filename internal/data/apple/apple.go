@@ -3,6 +3,8 @@ package apple
 import (
 	"context"
 	"log"
+	"math"
+	"sort"
 	"time"
 
 	// "strconv"
@@ -14,6 +16,21 @@ import (
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
 )
+
+//Sort by date(TglTransf)
+type timeSlice []appleEntity.Apple
+
+func (p timeSlice) Len() int {
+	return len(p)
+}
+
+func (p timeSlice) Less(i, j int) bool {
+	return p[i].TglTransf.Before(p[j].TglTransf)
+}
+
+func (p timeSlice) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
+}
 
 type (
 	// Data ...
@@ -167,7 +184,10 @@ func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]app
 		if err != nil {
 			return apples, errors.Wrap(err, "[DATA][GetPrintTempStorage] Failed to Populate Struct!")
 		}
-		apple.TotalPage = totalDoc / length
+		test := float64(totalDoc) / float64(length)
+		apple.TotalPage = int(math.Ceil(test))
+
+		log.Println(test)
 		apples = append(apples, apple)
 	}
 	return apples, err
@@ -181,16 +201,16 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]ap
 		iter      *firestore.DocumentIterator
 		lastDoc   *firestore.DocumentSnapshot
 		err       error
-		totalDoc0 int
+		totalDoc int
 	)
 
-	iterPage := d.fb.Collection("PrintApple").Documents(ctx)
+	iterPage := d.fb.Collection("PrintAppleStorage").Documents(ctx)
 	for {
 		_, err := iterPage.Next()
 		if err == iterator.Done {
 			break
 		}
-		totalDoc0++
+		totalDoc++
 	}
 
 	if page == 1 {
@@ -223,9 +243,12 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]ap
 		if err != nil {
 			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to Populate Struct!")
 		}
-		apple.TotalPage = totalDoc0 / length
+		test := float64(totalDoc) / float64(length)
+		apple.TotalPage = int(math.Ceil(test))
+
+		log.Println(test)
 		apples = append(apples, apple)
-		log.Println(totalDoc0)
+		log.Println(totalDoc)
 		log.Println(apple.TotalPage)
 	}
 	return apples, err
@@ -308,6 +331,8 @@ func (d Data) GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTran
 		t2, _ = time.Parse("2006-01-02", TglTransf1)
 		if apple.TglTransf.After(t1) && apple.TglTransf.Before(t2) {
 			appleFirebase = append(appleFirebase, apple)
+			sort.Sort(timeSlice(appleFirebase))
+
 		}
 	}
 	return appleFirebase, err
@@ -338,6 +363,7 @@ func (d Data) GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTra
 		t2, _ = time.Parse("2006-01-02", TglTransf1)
 		if apple.TglTransf.After(t1) && apple.TglTransf.Before(t2) {
 			appleFirebase = append(appleFirebase, apple)
+			sort.Sort(timeSlice(appleFirebase))
 		}
 
 	}

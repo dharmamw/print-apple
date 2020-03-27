@@ -101,3 +101,5 @@ type transFD struct {
 	WeiHValMin             float64 `firestore:"WeiH_ValMin" json:"weih_val_min"`
 	Packname               string  `firestore:"pack_name" json:"pack_name"`
 }
+
+

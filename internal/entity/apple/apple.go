@@ -62,7 +62,7 @@ type Apple struct {
 	Supaddress       string    `firestore:"sup_address" json:"sup_address"`
 	TelpDari         string    `firestore:"telpDari" json:"telp_dari"`
 	TelpTujuan       string    `firestore:"telpTujuan" json:"telp_tujuan"`
-	TglTransf        string    `firestore:"tglTransf" json:"tgl_transf"`
+	TglTransf        time.Time `firestore:"tglTransf" json:"tgl_transf"`
 	TotalBerat       float64   `firestore:"totalBerat" json:"total_berat"`
 	TotalDiskon      float64   `firestore:"totalDiskon" json:"total_diskon"` // CIMB
 	TotalHarga       int       `firestore:"totalHarga" json:"total_harga"`   // CIMB
@@ -70,6 +70,7 @@ type Apple struct {
 	TotalQTY         int       `firestore:"totalQTY" json:"total_qty"`
 	TransFD          []transFD `json:"trans_fd"`
 	TransFH          string    `firestore:"transFH" json:"trans_fh"` // flag API
+	TotalPage        int       `json:"total_page"`
 }
 
 // transFD Object Model

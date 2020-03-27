@@ -7,6 +7,7 @@ require (
 	github.com/Shopify/sarama v1.26.1
 	github.com/eapache/go-resiliency v1.2.0
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/mux v1.7.4
 	github.com/jmoiron/sqlx v1.2.0 // indirect
 	github.com/pkg/errors v0.9.1

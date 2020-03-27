@@ -3,6 +3,7 @@ package apple
 import (
 	"context"
 	"log"
+	"time"
 
 	// "strconv"
 
@@ -119,12 +120,22 @@ func (d Data) Insert(ctx context.Context, apple appleEntity.Apple) error {
 // GetPrintPageTemp ...
 func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
 	var (
-		apple   appleEntity.Apple
-		apples  []appleEntity.Apple
-		iter    *firestore.DocumentIterator
-		lastDoc *firestore.DocumentSnapshot
-		err     error
+		apple    appleEntity.Apple
+		apples   []appleEntity.Apple
+		iter     *firestore.DocumentIterator
+		lastDoc  *firestore.DocumentSnapshot
+		err      error
+		totalDoc int
 	)
+
+	iterPage := d.fb.Collection("PrintApple").Documents(ctx)
+	for {
+		_, err := iterPage.Next()
+		if err == iterator.Done {
+			break
+		}
+		totalDoc++
+	}
 
 	if page == 1 {
 		// Kalau page 1 ambil data langsung dari query
@@ -156,6 +167,7 @@ func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]app
 		if err != nil {
 			return apples, errors.Wrap(err, "[DATA][GetPrintTempStorage] Failed to Populate Struct!")
 		}
+		apple.TotalPage = totalDoc / length
 		apples = append(apples, apple)
 	}
 	return apples, err
@@ -164,12 +176,22 @@ func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]app
 // GetPrintPageFinal ...
 func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
 	var (
-		apple   appleEntity.Apple
-		apples  []appleEntity.Apple
-		iter    *firestore.DocumentIterator
-		lastDoc *firestore.DocumentSnapshot
-		err     error
+		apple     appleEntity.Apple
+		apples    []appleEntity.Apple
+		iter      *firestore.DocumentIterator
+		lastDoc   *firestore.DocumentSnapshot
+		err       error
+		totalDoc0 int
 	)
+
+	iterPage := d.fb.Collection("PrintApple").Documents(ctx)
+	for {
+		_, err := iterPage.Next()
+		if err == iterator.Done {
+			break
+		}
+		totalDoc0++
+	}
 
 	if page == 1 {
 		// Kalau page 1 ambil data langsung dari query
@@ -201,7 +223,10 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]ap
 		if err != nil {
 			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to Populate Struct!")
 		}
+		apple.TotalPage = totalDoc0 / length
 		apples = append(apples, apple)
+		log.Println(totalDoc0)
+		log.Println(apple.TotalPage)
 	}
 	return apples, err
 }
@@ -258,11 +283,13 @@ func (d Data) GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEnt
 	return appleFirebase, err
 }
 
-// GetByTglFakturTemp ...
-func (d Data) GetByTglFakturTemp(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error) {
+// GetByTglTransfTemp ...
+func (d Data) GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error) {
 	var (
 		appleFirebase []appleEntity.Apple
 		err           error
+		t1            time.Time
+		t2            time.Time
 	)
 
 	iter := d.fb.Collection("PrintApple").Documents(ctx)
@@ -277,18 +304,22 @@ func (d Data) GetByTglFakturTemp(ctx context.Context, TglFaktur0 string, TglFakt
 		if err != nil {
 			log.Println(err.Error())
 		}
-		if apple.TglFaktur >= TglFaktur0 && apple.TglFaktur <= TglFaktur1 {
+		t1, _ = time.Parse("2006-01-02", TglTransf0)
+		t2, _ = time.Parse("2006-01-02", TglTransf1)
+		if apple.TglTransf.After(t1) && apple.TglTransf.Before(t2) {
 			appleFirebase = append(appleFirebase, apple)
 		}
 	}
 	return appleFirebase, err
 }
 
-// GetByTglFakturFinal ...
-func (d Data) GetByTglFakturFinal(ctx context.Context, TglFaktur0 string, TglFaktur1 string) ([]appleEntity.Apple, error) {
+// GetByTglTransfFinal ...
+func (d Data) GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error) {
 	var (
 		appleFirebase []appleEntity.Apple
 		err           error
+		t1            time.Time
+		t2            time.Time
 	)
 
 	iter := d.fb.Collection("PrintAppleStorage").Documents(ctx)
@@ -303,7 +334,9 @@ func (d Data) GetByTglFakturFinal(ctx context.Context, TglFaktur0 string, TglFak
 		if err != nil {
 			log.Println(err.Error())
 		}
-		if apple.TglFaktur >= TglFaktur0 && apple.TglFaktur <= TglFaktur1 {
+		t1, _ = time.Parse("2006-01-02", TglTransf0)
+		t2, _ = time.Parse("2006-01-02", TglTransf1)
+		if apple.TglTransf.After(t1) && apple.TglTransf.Before(t2) {
 			appleFirebase = append(appleFirebase, apple)
 		}
 

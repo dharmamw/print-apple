@@ -135,14 +135,15 @@ func (d Data) Insert(ctx context.Context, apple appleEntity.Apple) error {
 }
 
 // GetPrintPageTemp ...
-func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
+func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) (map[string]interface{}, error) {
 	var (
-		apple    appleEntity.Apple
-		apples   []appleEntity.Apple
-		iter     *firestore.DocumentIterator
-		lastDoc  *firestore.DocumentSnapshot
-		err      error
-		totalDoc int
+		apple       appleEntity.Apple
+		apples      []appleEntity.Apple
+		iter        *firestore.DocumentIterator
+		lastDoc     *firestore.DocumentSnapshot
+		err         error
+		totalDoc    int
+		mapResponse map[string]interface{}
 	)
 
 	iterPage := d.fb.Collection("PrintApple").Documents(ctx)
@@ -153,6 +154,10 @@ func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]app
 		}
 		totalDoc++
 	}
+
+	hasilFloatPage := float64(totalDoc) / float64(length)
+	totalPage := int(math.Ceil(hasilFloatPage))
+	mapResponse = make(map[string]interface{})
 
 	if page == 1 {
 		// Kalau page 1 ambil data langsung dari query
@@ -178,30 +183,34 @@ func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]app
 		}
 
 		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetPrintTempStorage] Failed to iterate Document!")
+			return mapResponse, errors.Wrap(err, "[DATA][GetPrintTempStorage] Failed to iterate Document!")
 		}
 		err = doc.DataTo(&apple)
 		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetPrintTempStorage] Failed to Populate Struct!")
+			return mapResponse, errors.Wrap(err, "[DATA][GetPrintTempStorage] Failed to Populate Struct!")
 		}
-		test := float64(totalDoc) / float64(length)
-		apple.TotalPage = int(math.Ceil(test))
+		//test := float64(totalDoc) / float64(length)
+		//apple.TotalPage = int(math.Ceil(test))
 
-		log.Println(test)
+		//log.Println(test)
 		apples = append(apples, apple)
 	}
-	return apples, err
+	log.Println(totalPage)
+	mapResponse["content"] = apples
+	mapResponse["totalPages"] = totalPage
+	return mapResponse, err
 }
 
 // GetPrintPageFinal ...
-func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
+func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) (map[string]interface{}, error) {
 	var (
-		apple     appleEntity.Apple
-		apples    []appleEntity.Apple
-		iter      *firestore.DocumentIterator
-		lastDoc   *firestore.DocumentSnapshot
-		err       error
+		apple    appleEntity.Apple
+		apples   []appleEntity.Apple
+		iter     *firestore.DocumentIterator
+		lastDoc  *firestore.DocumentSnapshot
+		err      error
 		totalDoc int
+		mapResponse map[string]interface{}
 	)
 
 	iterPage := d.fb.Collection("PrintAppleStorage").Documents(ctx)
@@ -212,6 +221,10 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]ap
 		}
 		totalDoc++
 	}
+
+	hasilFloatPage := float64(totalDoc) / float64(length)
+	totalPage := int(math.Ceil(hasilFloatPage))
+	mapResponse = make(map[string]interface{})
 
 	if page == 1 {
 		// Kalau page 1 ambil data langsung dari query
@@ -237,21 +250,24 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]ap
 		}
 
 		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to iterate Document!")
+			return mapResponse, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to iterate Document!")
 		}
 		err = doc.DataTo(&apple)
 		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to Populate Struct!")
+			return mapResponse, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to Populate Struct!")
 		}
-		test := float64(totalDoc) / float64(length)
-		apple.TotalPage = int(math.Ceil(test))
+		//test := float64(totalDoc) / float64(length)
+		//apple.TotalPage = int(math.Ceil(test))
 
-		log.Println(test)
+		//log.Println(test)
 		apples = append(apples, apple)
 		log.Println(totalDoc)
-		log.Println(apple.TotalPage)
+		//log.Println(apple.TotalPage)
 	}
-	return apples, err
+	mapResponse = make(map[string]interface{})
+	mapResponse["content"] = apples
+	mapResponse["totalPages"] = totalPage
+	return mapResponse, err
 }
 
 // GetByTransFHTemp ...

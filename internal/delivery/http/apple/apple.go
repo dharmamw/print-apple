@@ -19,14 +19,13 @@ type IAppleSvc interface {
 	GetPrintApple(ctx context.Context) ([]appleEntity.Apple, error)
 	GetPrintAppleStorage(ctx context.Context) ([]appleEntity.Apple, error)
 	DeleteAndUpdateStorage(ctx context.Context, TransFH string) error
-	Insert(ctx context.Context, apple appleEntity.Apple) error
 	GetPrintPageTemp(ctx context.Context, page int, length int) (map[string]interface{}, error)
 	GetPrintPageFinal(ctx context.Context, page int, length int) (map[string]interface{}, error)
 	GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
 	GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
-	GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error)
+	//	GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error)
 }
 
 type (
@@ -54,7 +53,7 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 		apple    appleEntity.Apple
 		page     int
 		length   int
-		sortBy   string
+		// sortBy   string
 	)
 	// Make new response object
 	resp = &response.Response{}
@@ -71,32 +70,32 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 			_type = r.FormValue("get")
 		}
 		switch _type {
-		case "printAppleAll":
+		case "printAll":
 			result, err = h.appleSvc.GetPrintApple(context.Background())
-		case "printAppleStorageAll":
+		case "reprintAll":
 			result, err = h.appleSvc.GetPrintAppleStorage(context.Background())
-		case "getByIDTemp":
-			result, err = h.appleSvc.GetByTransFHTemp(context.Background(), r.FormValue("ID"))
-		case "getByIDFinal":
-			result, err = h.appleSvc.GetByTransFHFinal(context.Background(), r.FormValue("ID"))
-		case "getByTglTemp":
-			result, err = h.appleSvc.GetByTglTransfTemp(context.Background(), r.FormValue("Start"), r.FormValue("End"))
-		case "getByTglFinal":
-			result, err = h.appleSvc.GetByTglTransfFinal(context.Background(), r.FormValue("Start"), r.FormValue("End"))
-		case "getPrintPageTemp":
+		case "printByID":
+			result, err = h.appleSvc.GetByTransFHTemp(context.Background(), r.FormValue("codeID")) // 3 digit pertama
+		case "reprintByID":
+			result, err = h.appleSvc.GetByTransFHFinal(context.Background(), r.FormValue("codeID")) // 3 digit pertama
+		case "printByTgl":
+			result, err = h.appleSvc.GetByTglTransfTemp(context.Background(), r.FormValue("start"), r.FormValue("end"))
+		case "reprintByTgl":
+			result, err = h.appleSvc.GetByTglTransfFinal(context.Background(), r.FormValue("start"), r.FormValue("end"))
+		case "printPage":
 			page, err = strconv.Atoi(r.FormValue("page"))
 			length, err = strconv.Atoi(r.FormValue("length"))
 			result, err = h.appleSvc.GetPrintPageTemp(context.Background(), page, length)
-		case "getPrintPageFinal":
+		case "reprintPage":
 			page, err = strconv.Atoi(r.FormValue("page"))
 			length, err = strconv.Atoi(r.FormValue("length"))
 			result, err = h.appleSvc.GetPrintPageFinal(context.Background(), page, length)
-		case "getComplexPageFinal":
-			page, err = strconv.Atoi(r.FormValue("page"))
-			length, err = strconv.Atoi(r.FormValue("length"))
-			sortBy, err = r.FormValue("sort")
-			result, err = h.appleSvc.GetComplexPageFinal(context.Background(), page, length, sortBy)
-			log.Println(sortBy)
+			// case "getComplexPageFinal":
+			// 	page, err = strconv.Atoi(r.FormValue("page"))
+			// 	length, err = strconv.Atoi(r.FormValue("length"))
+			// 	sortBy, err = r.FormValue("sort")
+			// 	result, err = h.appleSvc.GetComplexPageFinal(context.Background(), page, length, sortBy)
+			// 	log.Println(sortBy)
 		}
 
 	case http.MethodPut:
@@ -106,20 +105,8 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 			_type = r.FormValue("put")
 		}
 		switch _type {
-		case "updel":
-			err = h.appleSvc.DeleteAndUpdateStorage(context.Background(), r.FormValue("TransFH"))
-		}
-
-	case http.MethodPost:
-		// Ambil semua data user
-		var _type string
-		if _, getOK := r.URL.Query()["post"]; getOK {
-			_type = r.FormValue("post")
-		}
-		switch _type {
-		case "insert":
-			json.Unmarshal(body, &apple)
-			err = h.appleSvc.Insert(context.Background(), apple)
+		case "printSuccess":
+			err = h.appleSvc.DeleteAndUpdateStorage(context.Background(), r.FormValue("ID"))
 		}
 	default:
 		err = errors.New("400")

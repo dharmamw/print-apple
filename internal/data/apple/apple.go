@@ -5,7 +5,7 @@ import (
 	"log"
 	"math"
 	"sort"
-	"strings"
+	// "strings"
 	"time"
 
 	// "strconv"
@@ -67,12 +67,10 @@ func (d Data) GetPrintApple(ctx context.Context) ([]appleEntity.Apple, error) {
 		if err == iterator.Done {
 			break
 		}
-		log.Println(doc)
 		err = doc.DataTo(&apple)
 		if err != nil {
 			log.Println(err.Error())
 		}
-		log.Println(apple)
 		appleFirebase = append(appleFirebase, apple)
 	}
 	return appleFirebase, err
@@ -91,7 +89,6 @@ func (d Data) GetPrintAppleStorage(ctx context.Context) ([]appleEntity.Apple, er
 		if err == iterator.Done {
 			break
 		}
-		log.Println(doc)
 		err = doc.DataTo(&apple)
 		if err != nil {
 			log.Println(err.Error())
@@ -125,13 +122,6 @@ func (d Data) DeleteAndUpdateStorage(ctx context.Context, TransFH string) error 
 		return errors.Wrap(err, "Data Not Exist")
 	}
 	_, err = d.fb.Collection("PrintApple").Doc(TransFH).Delete(ctx)
-	return err
-}
-
-//Insert ...
-func (d Data) Insert(ctx context.Context, apple appleEntity.Apple) error {
-	_, err := d.fb.Collection("PrintApple").Doc(apple.TransFH).Set(ctx, apple)
-
 	return err
 }
 
@@ -196,7 +186,6 @@ func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) (map[s
 		//log.Println(test)
 		apples = append(apples, apple)
 	}
-	log.Println(totalPage)
 	mapResponse["content"] = apples
 	mapResponse["totalPages"] = totalPage
 	return mapResponse, err
@@ -262,7 +251,6 @@ func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) (map[
 
 		//log.Println(test)
 		apples = append(apples, apple)
-		log.Println(totalDoc)
 		//log.Println(apple.TotalPage)
 	}
 	mapResponse = make(map[string]interface{})
@@ -285,7 +273,6 @@ func (d Data) GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEnti
 		if err == iterator.Done {
 			break
 		}
-		log.Println(doc)
 		err = doc.DataTo(&apple)
 		if err != nil {
 			log.Println(err.Error())
@@ -311,7 +298,6 @@ func (d Data) GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEnt
 		if err == iterator.Done {
 			break
 		}
-		log.Println(doc)
 		err = doc.DataTo(&apple)
 		if err != nil {
 			log.Println(err.Error())
@@ -339,7 +325,6 @@ func (d Data) GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTran
 		if err == iterator.Done {
 			break
 		}
-		log.Println(doc)
 		err = doc.DataTo(&apple)
 		if err != nil {
 			log.Println(err.Error())
@@ -371,7 +356,6 @@ func (d Data) GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTra
 		if err == iterator.Done {
 			break
 		}
-		log.Println(doc)
 		err = doc.DataTo(&apple)
 		if err != nil {
 			log.Println(err.Error())
@@ -387,85 +371,85 @@ func (d Data) GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTra
 	return appleFirebase, err
 }
 
-// GetComplexPageFinal ...
-func (d Data) GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error) {
-	var (
-		apple    appleEntity.Apple
-		apples   []appleEntity.Apple
-		iter     *firestore.DocumentIterator
-		lastDoc  *firestore.DocumentSnapshot
-		err      error
-		totalDoc int
-	)
+// // GetComplexPageFinal ...
+// func (d Data) GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error) {
+// 	var (
+// 		apple    appleEntity.Apple
+// 		apples   []appleEntity.Apple
+// 		iter     *firestore.DocumentIterator
+// 		lastDoc  *firestore.DocumentSnapshot
+// 		err      error
+// 		totalDoc int
+// 	)
 
-	iterPage := d.fb.Collection("PrintAppleStorage").Documents(ctx)
-	for {
-		_, err := iterPage.Next()
-		if err == iterator.Done {
-			break
-		}
-		totalDoc++
-	}
+// 	iterPage := d.fb.Collection("PrintAppleStorage").Documents(ctx)
+// 	for {
+// 		_, err := iterPage.Next()
+// 		if err == iterator.Done {
+// 			break
+// 		}
+// 		totalDoc++
+// 	}
 
-	if page == 1 {
-		log.Println(sortBy)
-		switch sortBy {
-		case "newest":
-			iter = d.fb.Collection("PrintAppleStorage").Limit(length).Documents(ctx)
-			sort.Sort(sort.Reverse(timeSlice(apples)))
-		case "ams":
-			iter := d.fb.Collection("PrintAppleStorage").Documents(ctx)
-			for {
-				var apple appleEntity.Apple
-				doc, err := iter.Next()
-				if err == iterator.Done {
-					break
-				}
-				log.Println(doc)
-				err = doc.DataTo(&apple)
-				if err != nil {
-					log.Println(err.Error())
-				}
-				if apple.PaymentMethod == strings.ToUpper(sortBy) {
-					apples = append(apples, apple)
-				}
-				iter = d.fb.Collection("PrintAppleStorage").Limit(length).Documents(ctx)
-			}
-		}
-	} else {
-		// Kalau page > 1 ambil data sampai page sebelumnya
-		previous := d.fb.Collection("PrintAppleStorage").Limit((page - 1) * length).Documents(ctx)
-		docs, err := previous.GetAll()
-		if err != nil {
-			return nil, err
-		}
-		// Ambil doc terakhir
-		lastDoc = docs[len(docs)-1]
-		// Query mulai setelah doc terakhir
-		iter = d.fb.Collection("PrintAppleStorage").StartAfter(lastDoc).Limit(length).Documents(ctx)
-	}
+// 	if page == 1 {
+// 		log.Println(sortBy)
+// 		switch sortBy {
+// 		case "newest":
+// 			iter = d.fb.Collection("PrintAppleStorage").Limit(length).Documents(ctx)
+// 			sort.Sort(sort.Reverse(timeSlice(apples)))
+// 		case "ams":
+// 			iter := d.fb.Collection("PrintAppleStorage").Documents(ctx)
+// 			for {
+// 				var apple appleEntity.Apple
+// 				doc, err := iter.Next()
+// 				if err == iterator.Done {
+// 					break
+// 				}
+// 				log.Println(doc)
+// 				err = doc.DataTo(&apple)
+// 				if err != nil {
+// 					log.Println(err.Error())
+// 				}
+// 				if apple.PaymentMethod == strings.ToUpper(sortBy) {
+// 					apples = append(apples, apple)
+// 				}
+// 				iter = d.fb.Collection("PrintAppleStorage").Limit(length).Documents(ctx)
+// 			}
+// 		}
+// 	} else {
+// 		// Kalau page > 1 ambil data sampai page sebelumnya
+// 		previous := d.fb.Collection("PrintAppleStorage").Limit((page - 1) * length).Documents(ctx)
+// 		docs, err := previous.GetAll()
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		// Ambil doc terakhir
+// 		lastDoc = docs[len(docs)-1]
+// 		// Query mulai setelah doc terakhir
+// 		iter = d.fb.Collection("PrintAppleStorage").StartAfter(lastDoc).Limit(length).Documents(ctx)
+// 	}
 
-	// Looping documents
-	for {
-		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
+// 	// Looping documents
+// 	for {
+// 		doc, err := iter.Next()
+// 		if err == iterator.Done {
+// 			break
+// 		}
 
-		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to iterate Document!")
-		}
-		err = doc.DataTo(&apple)
-		if err != nil {
-			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to Populate Struct!")
-		}
-		test := float64(totalDoc) / float64(length)
-		apple.TotalPage = int(math.Ceil(test))
+// 		if err != nil {
+// 			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to iterate Document!")
+// 		}
+// 		err = doc.DataTo(&apple)
+// 		if err != nil {
+// 			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to Populate Struct!")
+// 		}
+// 		test := float64(totalDoc) / float64(length)
+// 		apple.TotalPage = int(math.Ceil(test))
 
-		log.Println(test)
-		apples = append(apples, apple)
-		log.Println(totalDoc)
-		log.Println(apple.TotalPage)
-	}
-	return apples, err
-}
+// 		log.Println(test)
+// 		apples = append(apples, apple)
+// 		log.Println(totalDoc)
+// 		log.Println(apple.TotalPage)
+// 	}
+// 	return apples, err
+// }

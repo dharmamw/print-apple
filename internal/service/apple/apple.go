@@ -2,7 +2,7 @@ package skeleton
 
 import (
 	"context"
-	"log"
+	//	"log"
 
 	appleEntity "print-apple/internal/entity/apple"
 	"print-apple/pkg/errors"
@@ -15,14 +15,13 @@ type AppleData interface {
 	GetPrintAppleStorage(ctx context.Context) ([]appleEntity.Apple, error)
 	UpdateStorage(ctx context.Context, TransFH string) error
 	DeleteAndUpdateStorage(ctx context.Context, TransFH string) error
-	Insert(ctx context.Context, apple appleEntity.Apple) error
 	GetPrintPageTemp(ctx context.Context, page int, length int) (map[string]interface{}, error)
 	GetPrintPageFinal(ctx context.Context, page int, length int) (map[string]interface{}, error)
 	GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
 	GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
-	GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error)
+	//	GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error)
 }
 
 // Service ...
@@ -59,15 +58,6 @@ func (s Service) DeleteAndUpdateStorage(ctx context.Context, TransFH string) err
 	err = s.AppleData.DeleteAndUpdateStorage(ctx, TransFH)
 	if err != nil {
 		return errors.Wrap(err, "[SERVICE][DeleteAndUpdateStorage]")
-	}
-	return err
-}
-
-// Insert ...
-func (s Service) Insert(ctx context.Context, apple appleEntity.Apple) error {
-	err := s.AppleData.Insert(ctx, apple)
-	if err != nil {
-		return errors.Wrap(err, "[SERVICE][Insert]")
 	}
 	return err
 }
@@ -118,12 +108,12 @@ func (s Service) GetByTglTransfFinal(ctx context.Context, TglTransf0 string, Tgl
 	return apple, err
 }
 
-// GetComplexPageFinal ...
-func (s Service) GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error) {
-	appleList, err := s.AppleData.GetComplexPageFinal(ctx, page, length, sortBy)
-	if err != nil {
-		return appleList, errors.Wrap(err, "[SERVICE][GetComplexPageFinal]")
-	}
-	log.Println(sortBy)
-	return appleList, err
-}
+// // GetComplexPageFinal ...
+// func (s Service) GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error) {
+// 	appleList, err := s.AppleData.GetComplexPageFinal(ctx, page, length, sortBy)
+// 	if err != nil {
+// 		return appleList, errors.Wrap(err, "[SERVICE][GetComplexPageFinal]")
+// 	}
+// 	log.Println(sortBy)
+// 	return appleList, err
+// }

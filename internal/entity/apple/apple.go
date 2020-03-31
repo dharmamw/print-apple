@@ -70,7 +70,7 @@ type Apple struct {
 	TotalQTY         int       `firestore:"totalQTY" json:"total_qty"`
 	TransFD          []transFD `json:"trans_fd"`
 	TransFH          string    `firestore:"transFH" json:"trans_fh"` // flag API
-	TotalPage        int       `json:"total_page"`
+	//TotalPage        int       `json:"total_page"`
 }
 
 // transFD Object Model

@@ -16,8 +16,8 @@ type AppleData interface {
 	UpdateStorage(ctx context.Context, TransFH string) error
 	DeleteAndUpdateStorage(ctx context.Context, TransFH string) error
 	Insert(ctx context.Context, apple appleEntity.Apple) error
-	GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
-	GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
+	GetPrintPageTemp(ctx context.Context, page int, length int) (map[string]interface{}, error)
+	GetPrintPageFinal(ctx context.Context, page int, length int) (map[string]interface{}, error)
 	GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
@@ -73,21 +73,21 @@ func (s Service) Insert(ctx context.Context, apple appleEntity.Apple) error {
 }
 
 // GetPrintPageTemp ...
-func (s Service) GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
-	appleList, err := s.AppleData.GetPrintPageTemp(ctx, page, length)
+func (s Service) GetPrintPageTemp(ctx context.Context, page int, length int) (map[string]interface{}, error) {
+	mapResponse, err := s.AppleData.GetPrintPageTemp(ctx, page, length)
 	if err != nil {
-		return appleList, errors.Wrap(err, "[SERVICE][GetPrintPageTemp]")
+		return mapResponse, errors.Wrap(err, "[SERVICE][GetPrintPageTemp]")
 	}
-	return appleList, err
+	return mapResponse, err
 }
 
 // GetPrintPageFinal ...
-func (s Service) GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
-	appleList, err := s.AppleData.GetPrintPageFinal(ctx, page, length)
+func (s Service) GetPrintPageFinal(ctx context.Context, page int, length int) (map[string]interface{}, error) {
+	mapResponse, err := s.AppleData.GetPrintPageFinal(ctx, page, length)
 	if err != nil {
-		return appleList, errors.Wrap(err, "[SERVICE][GetPrintPageFinal]")
+		return mapResponse, errors.Wrap(err, "[SERVICE][GetPrintPageFinal]")
 	}
-	return appleList, err
+	return mapResponse, err
 }
 
 // GetByTransFHTemp ...

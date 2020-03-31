@@ -20,8 +20,8 @@ type IAppleSvc interface {
 	GetPrintAppleStorage(ctx context.Context) ([]appleEntity.Apple, error)
 	DeleteAndUpdateStorage(ctx context.Context, TransFH string) error
 	Insert(ctx context.Context, apple appleEntity.Apple) error
-	GetPrintPageTemp(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
-	GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error)
+	GetPrintPageTemp(ctx context.Context, page int, length int) (map[string]interface{}, error)
+	GetPrintPageFinal(ctx context.Context, page int, length int) (map[string]interface{}, error)
 	GetByTransFHTemp(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)

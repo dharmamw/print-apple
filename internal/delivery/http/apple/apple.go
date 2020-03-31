@@ -26,6 +26,7 @@ type IAppleSvc interface {
 	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
 	GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
+	GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error)
 }
 
 type (
@@ -53,6 +54,7 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 		apple    appleEntity.Apple
 		page     int
 		length   int
+		sortBy   string
 	)
 	// Make new response object
 	resp = &response.Response{}
@@ -89,6 +91,12 @@ func (h *Handler) AppleHandler(w http.ResponseWriter, r *http.Request) {
 			page, err = strconv.Atoi(r.FormValue("page"))
 			length, err = strconv.Atoi(r.FormValue("length"))
 			result, err = h.appleSvc.GetPrintPageFinal(context.Background(), page, length)
+		case "getComplexPageFinal":
+			page, err = strconv.Atoi(r.FormValue("page"))
+			length, err = strconv.Atoi(r.FormValue("length"))
+			sortBy, err = r.FormValue("sort")
+			result, err = h.appleSvc.GetComplexPageFinal(context.Background(), page, length, sortBy)
+			log.Println(sortBy)
 		}
 
 	case http.MethodPut:

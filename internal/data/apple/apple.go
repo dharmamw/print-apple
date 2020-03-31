@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"sort"
+	"strings"
 	"time"
 
 	// "strconv"
@@ -196,11 +197,11 @@ func (d Data) GetPrintPageTemp(ctx context.Context, page int, length int) ([]app
 // GetPrintPageFinal ...
 func (d Data) GetPrintPageFinal(ctx context.Context, page int, length int) ([]appleEntity.Apple, error) {
 	var (
-		apple     appleEntity.Apple
-		apples    []appleEntity.Apple
-		iter      *firestore.DocumentIterator
-		lastDoc   *firestore.DocumentSnapshot
-		err       error
+		apple    appleEntity.Apple
+		apples   []appleEntity.Apple
+		iter     *firestore.DocumentIterator
+		lastDoc  *firestore.DocumentSnapshot
+		err      error
 		totalDoc int
 	)
 
@@ -368,4 +369,87 @@ func (d Data) GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTra
 
 	}
 	return appleFirebase, err
+}
+
+// GetComplexPageFinal ...
+func (d Data) GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error) {
+	var (
+		apple    appleEntity.Apple
+		apples   []appleEntity.Apple
+		iter     *firestore.DocumentIterator
+		lastDoc  *firestore.DocumentSnapshot
+		err      error
+		totalDoc int
+	)
+
+	iterPage := d.fb.Collection("PrintAppleStorage").Documents(ctx)
+	for {
+		_, err := iterPage.Next()
+		if err == iterator.Done {
+			break
+		}
+		totalDoc++
+	}
+
+	if page == 1 {
+		log.Println(sortBy)
+		switch sortBy {
+		case "newest":
+			iter = d.fb.Collection("PrintAppleStorage").Limit(length).Documents(ctx)
+			sort.Sort(sort.Reverse(timeSlice(apples)))
+		case "ams":
+			iter := d.fb.Collection("PrintAppleStorage").Documents(ctx)
+			for {
+				var apple appleEntity.Apple
+				doc, err := iter.Next()
+				if err == iterator.Done {
+					break
+				}
+				log.Println(doc)
+				err = doc.DataTo(&apple)
+				if err != nil {
+					log.Println(err.Error())
+				}
+				if apple.PaymentMethod == strings.ToUpper(sortBy) {
+					apples = append(apples, apple)
+				}
+				iter = d.fb.Collection("PrintAppleStorage").Limit(length).Documents(ctx)
+			}
+		}
+	} else {
+		// Kalau page > 1 ambil data sampai page sebelumnya
+		previous := d.fb.Collection("PrintAppleStorage").Limit((page - 1) * length).Documents(ctx)
+		docs, err := previous.GetAll()
+		if err != nil {
+			return nil, err
+		}
+		// Ambil doc terakhir
+		lastDoc = docs[len(docs)-1]
+		// Query mulai setelah doc terakhir
+		iter = d.fb.Collection("PrintAppleStorage").StartAfter(lastDoc).Limit(length).Documents(ctx)
+	}
+
+	// Looping documents
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+
+		if err != nil {
+			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to iterate Document!")
+		}
+		err = doc.DataTo(&apple)
+		if err != nil {
+			return apples, errors.Wrap(err, "[DATA][GetPrintFinalStorage] Failed to Populate Struct!")
+		}
+		test := float64(totalDoc) / float64(length)
+		apple.TotalPage = int(math.Ceil(test))
+
+		log.Println(test)
+		apples = append(apples, apple)
+		log.Println(totalDoc)
+		log.Println(apple.TotalPage)
+	}
+	return apples, err
 }

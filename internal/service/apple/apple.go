@@ -2,6 +2,7 @@ package skeleton
 
 import (
 	"context"
+	"log"
 
 	appleEntity "print-apple/internal/entity/apple"
 	"print-apple/pkg/errors"
@@ -21,6 +22,7 @@ type AppleData interface {
 	GetByTransFHFinal(ctx context.Context, TransFH string) ([]appleEntity.Apple, error)
 	GetByTglTransfTemp(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
 	GetByTglTransfFinal(ctx context.Context, TglTransf0 string, TglTransf1 string) ([]appleEntity.Apple, error)
+	GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error)
 }
 
 // Service ...
@@ -114,4 +116,14 @@ func (s Service) GetByTglTransfFinal(ctx context.Context, TglTransf0 string, Tgl
 
 	apple, err := s.AppleData.GetByTglTransfFinal(ctx, TglTransf0, TglTransf1)
 	return apple, err
+}
+
+// GetComplexPageFinal ...
+func (s Service) GetComplexPageFinal(ctx context.Context, page int, length int, sortBy string) ([]appleEntity.Apple, error) {
+	appleList, err := s.AppleData.GetComplexPageFinal(ctx, page, length, sortBy)
+	if err != nil {
+		return appleList, errors.Wrap(err, "[SERVICE][GetComplexPageFinal]")
+	}
+	log.Println(sortBy)
+	return appleList, err
 }
